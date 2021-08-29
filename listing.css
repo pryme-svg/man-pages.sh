@@ -14,3 +14,15 @@ a:hover {
 ul.multi-column {
     column-width: 20em;
 }
+#navbar ul li {
+    display: inline-block;
+    padding-top: 1em;
+}
+ul#navbarlist{
+    margin: 0;
+    margin-bottom: 1em;
+}
+#navbar {
+    border-bottom: 5px solid #808080;
+/*     padding: 10px 15px; */
+}
