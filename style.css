@@ -1,0 +1,340 @@
+* {
+    margin: 0;
+    line-height: 1.4;
+}
+html {
+    color: #e8e6e3;
+    background-color: #181a1b;
+    font-family: sans-serif;
+    margin: auto;
+}
+
+/* header bar */
+
+#navbar {
+    border-bottom: 5px solid #808080;
+    padding: 10px 15px;
+}
+#navbar ul li {
+    display: inline-block;
+    padding-top: 14px;
+}
+
+
+td.head-vol {
+    text-align: center;
+}
+
+td.head-rtitle {
+    text-align: right;
+}
+table.head {
+    width: 100%;
+    border-bottom: 1px dotted #808080;
+    font-size: smaller;
+}
+table.foot {
+    width: 100%;
+    border-top: 1px dotted #808080;
+    font-size: smaller;
+    margin-top: 1em;
+}
+td.foot-os {
+    text-align: right
+}
+pre {
+    font: 1.2em monospace;
+    border: 1px solid rgb(72, 78, 81);
+    background-color: rgb(34, 36, 38);
+    padding: 0.5em;
+    margin: 1em;
+}
+a {
+    color: #49BDFF;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+a.permalink {
+    text-decoration: none;
+    border-bottom: thin dotted;
+}
+#sidebar {
+    margin-left: 2em;
+    min-width: 20ch;
+    max-width: 40ch;
+}
+.man-page-content div.manual-text {
+    text-align: justify;
+    margin-left: 5ex;
+}
+.man-page-content h1.Sh {
+    font-size: 1.25em;
+    margin-left: -4ex;
+}
+.man-page-content h2.Ss {
+    font-size: 1.1em;
+}
+.man-page-content p {
+    margin-top: 0.6em;
+    margin-bottom: 0.6em;
+}
+.man-page-content table.tbl {
+    border-color: rgb(44, 66, 88);
+    border-collapse: collapse;
+    font-size: 1.00em;
+    margin-top: 0.6em;
+}
+.man-page-content table.tbl tr td,
+.man-page-content table.tbl th {
+    padding: 0.35em 0.90em;
+    text-align: left;
+    word-break: break-word;
+}
+.man-page-content table.tbl tr:first-child td:not(:only-child) {
+    font-weight: bold;
+}
+.man-page-content table.tbl th,
+.man-page-content table.tbl tr:first-child td:not(:only-child) {
+    background-color: rgb(28, 48, 57);
+    border-bottom-color: rgb(44,66, 88);
+}
+.man-page-content table.tbl tr:hover {
+    background-color: #1a2a32;
+}
+.man-page-content br:first-child,
+.man-page-content br:last-child {
+    display: none;
+}
+main#content {
+    display: flex;
+    margin:1em;
+    justify-content: center;
+}
+#content {
+    font-size: 0.875em;
+}
+#content-left {
+    max-width: 80ch;
+    min-width: 40ch;
+    flex-basis: 70%;
+}
+
+
+
+/* man page styles */
+
+/* Sections and paragraphs. */
+
+.manual-text {
+                margin-left: 3.8em; }
+.Nd {           display: inline; }
+section.Sh { }
+h1.Sh {         margin-top: 1.2em;
+                margin-bottom: 0.6em;
+                margin-left: -3.2em;
+                font-size: 110%; }
+section.Ss { }
+h2.Ss {         margin-top: 1.2em;
+                margin-bottom: 0.6em;
+                margin-left: -1.2em;
+                font-size: 105%; }
+.Pp {           margin: 0.6em 0em; }
+.Sx { }
+.Xr { }
+
+/* Displays and lists. */
+
+.Bd { }
+.Bd-indent {    margin-left: 3.8em; }
+/* cancel useless indentation of pre tags (leave visual left margin of 1em) */
+.Bd-indent > pre:only-child {
+                margin-left: -2.8em;
+                margin-top: 0em; }
+/* cancel useless double-indent */
+.Bd-indent > .Bd-indent:only-child {
+                margin-left: 0em; }
+
+.Bl-bullet {    list-style-type: disc;
+                padding-left: 1em; }
+.Bl-bullet > li { }
+.Bl-dash {      list-style-type: none;
+                padding-left: 0em; }
+.Bl-dash > li:before {
+                content: "\2014  "; }
+.Bl-item {      list-style-type: none;
+                padding-left: 0em; }
+.Bl-item > li { }
+.Bl-compact > li {
+                margin-top: 0em; }
+
+.Bl-enum {      padding-left: 2em; }
+.Bl-enum > li { }
+.Bl-compact > li {
+                margin-top: 0em; }
+
+.Bl-diag { }
+.Bl-diag > dt {
+                font-style: normal;
+                font-weight: bold; }
+.Bl-diag > dd {
+                margin-left: 0em; }
+.Bl-hang { }
+.Bl-hang > dt { }
+.Bl-hang > dd {
+                margin-left: 3.8em; }
+.Bl-inset { }
+.Bl-inset > dt { }
+.Bl-inset > dd {
+                margin-left: 0em; }
+.Bl-ohang { }
+.Bl-ohang > dt { }
+.Bl-ohang > dd {
+                margin-left: 0em; }
+.Bl-tag {       margin-top: 0.6em;
+                margin-left: 3.8em; }
+.Bl-tag > dt {
+                float: left;
+                margin-top: 0em;
+                margin-left: -3.8em;
+                padding-right: 0.5em;
+                vertical-align: top; }
+.Bl-tag > dd {
+                clear: right;
+                width: 100%;
+                margin-top: 0em;
+                margin-left: 0em;
+                margin-bottom: 0.6em;
+                vertical-align: top;
+                overflow: auto; }
+.Bl-compact {   margin-top: 0em; }
+.Bl-compact > dd {
+                margin-bottom: 0em; }
+.Bl-compact > dt {
+                margin-top: 0em; }
+
+.Bl-column { }
+.Bl-column > tbody > tr { }
+.Bl-column > tbody > tr > td {
+                margin-top: 1em; }
+.Bl-compact > tbody > tr > td {
+                margin-top: 0em; }
+
+.Rs {           font-style: normal;
+                font-weight: normal; }
+.RsA { }
+.RsB {          font-style: italic;
+                font-weight: normal; }
+.RsC { }
+.RsD { }
+.RsI {          font-style: italic;
+                font-weight: normal; }
+.RsJ {          font-style: italic;
+                font-weight: normal; }
+.RsN { }
+.RsO { }
+.RsP { }
+.RsQ { }
+.RsR { }
+.RsT {          text-decoration: underline; }
+.RsU { }
+.RsV { }
+
+.eqn { }
+.tbl td {       vertical-align: middle; }
+
+/* NOTE: .HP is only placed on <p> tags, this selector conflicts with ".man-page-content p"
+   and the .HP macro is deprecated anyway (its meaning cannot be represented exactly in HTML)
+.HP {           margin-left: 3.8em;
+                text-indent: -3.8em; }
+*/
+
+/* Semantic markup for command line utilities. */
+
+table.Nm { }
+code.Nm {       font-style: normal;
+                font-weight: bold; }
+.Fl {           font-style: normal;
+                font-weight: bold; }
+.Cm {           font-style: normal;
+                font-weight: bold; }
+.Ar {           font-style: italic;
+                font-weight: normal; }
+.Op {           display: inline; }
+.Ic {           font-style: normal;
+                font-weight: bold; }
+.Ev {           font-style: normal;
+                font-weight: normal; }
+.Pa {           font-style: italic;
+                font-weight: normal; }
+
+/* Semantic markup for function libraries. */
+
+.Lb { }
+code.In {       font-style: normal;
+                font-weight: bold; }
+a.In { }
+.Fd {           font-style: normal;
+                font-weight: bold; }
+.Ft {           font-style: italic;
+                font-weight: normal; }
+.Fn {           font-style: normal;
+                font-weight: bold; }
+.Fa {           font-style: italic;
+                font-weight: normal; }
+.Vt {           font-style: italic;
+                font-weight: normal; }
+.Va {           font-style: italic;
+                font-weight: normal; }
+.Dv {           font-style: normal;
+                font-weight: normal; }
+.Er {           font-style: normal;
+                font-weight: normal; }
+
+/* Various semantic markup. */
+
+.An { }
+.Lk { }
+.Mt { }
+.Cd {           font-style: normal;
+                font-weight: bold; }
+.Ad {           font-style: italic;
+                font-weight: normal; }
+.Ms {           font-style: normal;
+                font-weight: bold; }
+.St { }
+.Ux { }
+
+/* Physical markup. */
+
+.Bf {           display: inline; }
+.No {           font-style: normal;
+                font-weight: normal; }
+.Em {           font-style: italic;
+                font-weight: normal; }
+.Sy {           font-style: normal;
+                font-weight: bold; }
+.Li {           font-style: normal;
+                font-weight: normal; }
+
+/* Responsive overrides to avoid excessive margins on small devices. */
+
+@media (max-width: 33em) {
+.man-page-content div.manual-text {
+    margin-left: 0em;
+}
+.man-page-content h1.Sh,
+.man-page-content h2.Ss {
+    margin-left: 0em;
+}
+/* the following rules are copied from mandoc.css */
+.Bd-indent {    margin-left: 2em; }
+.Bl-hang > dd {
+                margin-left: 2em; }
+.Bl-tag {       margin-left: 2em; }
+.Bl-tag > dt {
+                margin-left: -2em; }
+.HP {           margin-left: 2em;
+                text-indent: -2em; }
+}

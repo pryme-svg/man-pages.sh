@@ -1,0 +1,16 @@
+html {
+    color: #e8e6e3;
+    background-color: #181a1b;
+    font-family: sans-serif;
+    margin: auto;
+}
+a {
+    color: #49BDFF;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+ul.multi-column {
+    column-width: 20em;
+}
