@@ -87,13 +87,15 @@ usage() {
 
 update_pages() {
     test -d "man-pages" || git clone git://git.kernel.org/pub/scm/docs/man-pages/man-pages.git
-    git -C "man-pages" pull 
-    test -d "man-pages-posix" || echo "Please download the latest version of man-pages-posix from https://www.kernel.org/pub/linux/docs/man-pages/man-pages-posix/" && exit 1
+    test -d "man-pages-posix" || git clone git://git.kernel.org/pub/scm/docs/man-pages/man-pages-posix.git
+    for repo in "man-pages" "man-pages-posix"; do
+        (git -C "$repo" pull)
+    done
 }
 
 main() {
     test -d "$1" || usage
-#    update_pages
+    update_pages
     make_html $1
     rm "$1/.tmptoc"
     gen_section_listing $1
