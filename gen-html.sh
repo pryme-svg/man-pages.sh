@@ -21,42 +21,98 @@ make_html () {
         # replace references to man pages with actual link
         body=$(mandoc -T html -O fragment "$f" | sed -E -e 's|<b>(\w+)<\/b>\(([1-8]p?)\)|<a href="\1.\2.html">\1\(\2\)</a>|g' -e 's|<b>(.*?\.conf)<\/b>\(([1-8]p?)\)|<a href="\1.\2.html">\1\(\2\)</a>|g')
         title=$(basename "$f" | cut -f1 -d".")
-        category=$(basename "$f" | cut -f2 -d".")
-        header=$(sed -e "s|\$title|$title ($category)|g" "templates/header.html")
-        footer=$(cat templates/footer.html)
-        whole="$header$body\n$footer"
-#        whole=$(sed -e "s|<title></title>|<title>$title</title>|g" -e "s^<article></article>^<article>$body</article>^g" "template.html")
-        echo "$whole" > "$1/$(basename "$f").html"
-
-        toc=$(grep -I -E "\<h1[^\>]*\>[^\<\>]*|\<a class=(\"|\')permalink(\"|\') href=(\"|\')#(?P<id>\S+)(\"|\')\>|(?P<title>.+?)|\<\/a\>[^\<\>]*|\<\/h1\>" "$1/$(basename "$f").html" | grep -Eo 'href="[^\"]+"' | grep -Eo '(#)[^/"]+')
-        echo "$toc" > "$1/.tmptoc"
-        html_toc=""
-
-        while read -r line;
-        do
-            html_toc="$html_toc<li><a href=\"$line\">$(echo "$line" | cut -f2 -d"#")</a></li>"
-        done < "$1/.tmptoc"
-
-        sed -i "s|\$toc|$html_toc|g" "$1/$(basename "$f").html"
-
-        sed -i "s|\$date|$(date -I)|g" "$1/$(basename "$f").html"
+        section=$(basename "$f" | cut -f2 -d".")
+#        header=$(sed -e "s|\$title|$title ($section)|g" "templates/header.html")
+#        footer=$(cat templates/footer.html)
 
         basedir=$(echo "$f" | cut -d"/" -f1)
 
         case "$basedir" in
             "man-pages")
-                src="The Linux man-pages project"
+                src="The~Linux~man-pages~project"
                 ;;
             "man-pages-posix")
-                src="POSIX.1 standard"
+                src="POSIX.1~standard"
                 ;;
             "arch-linux-pages")
-                src="Arch Linux Core Repository"
+                src="Arch Linux~Core~Repository"
                 ;;
         esac
-        sed -i "s|\$source|$src|g" "$1/$(basename "$f").html"
+#        sed -i "s|\$source|$src|g" "$1/$(basename "$f").html"
+
+
+        whole=$(gen_page "$body" "title:$title($section)" "date:$(date -I) source:$src" "man_header.html" "man_footer.html")
+#        whole="$header$body\n$footer"
+#        whole=$(sed -e "s|<title></title>|<title>$title</title>|g" -e "s^<article></article>^<article>$body</article>^g" "template.html")
+        echo "$whole" > "$1/$(basename "$f").html"
+
+        toc=$(grep -I -E "\<h1[^\>]*\>[^\<\>]*|\<a class=(\"|\')permalink(\"|\') href=(\"|\')#(?P<id>\S+)(\"|\')\>|(?P<title>.+?)|\<\/a\>[^\<\>]*|\<\/h1\>" "$1/$(basename "$f").html" | grep -Eo 'href="[^\"]+"' | grep -Eo '(#)[^/"]+')
+
+        if [ "$(echo "$toc" | grep "\S" | wc -l)" -lt 1 ]; then
+            sed -i "s|\$toc||g" "$1/$(basename "$f").html"
+        else
+
+            echo "$toc" > "$TMPDIR/.tmptoc"
+            html_toc=""
+
+            while read -r line;
+            do
+                html_toc="$html_toc<li><a href=\"$line\">$(echo "$line" | cut -f2 -d"#")</a></li>"
+            done < "$TMPDIR/.tmptoc"
+
+            sed -i "s|\$toc|<details>\n<summary>Table of contents<\/summary>\n<nav class=\"toc\">\n<ul class=\"toclist\">\n$html_toc\n<\/ul>\n<\/nav>\n<\/details>|g" "$1/$(basename "$f").html"
+
+#            sed -i "s|\$toc|$html_toc|g" "$1/$(basename "$f").html"
+        fi
+
+
+#        sed -i "s|\$date|$(date -I)|g" "$1/$(basename "$f").html"
+
+
 
     done
+}
+
+# common_{header,footer} assumed
+# gen_header <content> <header_vars (var:value var2:value2)> <footer_vars> <custom_header_file> <custom_footer_file> 
+gen_page() {
+
+    if [ -z "$4" ]; then
+        header="$HEADER"
+    else
+        header="$HEADER$(cat templates/$4)"
+    fi
+    if [ -z "$5" ]; then
+        footer="$FOOTER"
+    else
+        footer="$(cat templates/$5)$FOOTER"
+    fi
+
+
+    if [ -n "$2" ]; then
+        for var in $2; do
+            name=$(echo "$var" | cut -d":" -f1 | tr '~' ' ')
+            value=$(echo "$var" | cut -d":" -f2 | tr '~' ' ')
+            # need to read from stdin if too long
+#            header=$(echo "$header" | sed -f - << EOF
+#            s|\$name|$value|g
+#EOF
+#            )
+            header=$(echo "$header" | sed "s|\$$name|$value|g")
+        done
+    fi
+    if [ -n "$3" ]; then
+        for var in $3; do
+            name=$(echo "$var" | cut -d":" -f1 | tr '~' ' ')
+            value=$(echo "$var" | cut -d":" -f2 | tr '~' ' ')
+#            footer=$(echo "$footer" | sed -f - << EOF
+#            s|\$name|$value|g
+#EOF
+#            )
+            footer=$(echo "$footer" | sed "s|\$$name|$value|g")
+        done
+    fi
+    echo "$header\n$1\n$footer"
 }
 
 gen_section_listing () {
@@ -70,11 +126,13 @@ gen_section_listing () {
         done
         #echo "$i" # just for testing
 #        whole=$(sed -e "s|\$title|Man Pages: section $i|g" templates/listing.html)
-        whole=$(sed -f - templates/listing.html << EOF
+        gen_page "" "title:Man~Pages~section~$i section:$i" "" "listing_header.html" > "$TMPDIR/.tmplisting"
+
+        whole=$(sed -f - "$TMPDIR/.tmplisting" << EOF
         s|\$items|$items|g
 EOF
 )
-        whole=$(echo "$whole" | sed "s|\$title|Man Pages: section $i|g")
+#        whole=$(echo "$whole" | sed "s|\$title|Man Pages: section $i|g")
 
         echo "$whole" > "$1/section_$i.html"
     done
@@ -95,13 +153,23 @@ update_pages() {
 
 main() {
     test -d "$1" || usage
+
+    # header and footer
+    h_file="templates/common_header.html"
+    f_file="templates/common_footer.html"
+    test -f "$f_file" && FOOTER=$(cat "$f_file") && export FOOTER
+	test -f "$h_file" && HEADER=$(cat "$h_file") && export HEADER
+
+    export TMPDIR="build_dir"
+    [ ! -d "$TMPDIR" ] && mkdir "$TMPDIR"
+
     update_pages
-    make_html $1
-    rm "$1/.tmptoc"
+#    make_html $1
+#    rm "$TMPDIR/.tmptoc"
     gen_section_listing $1
     cp style.css "$1"
     cp listing.css "$1"
-    cp templates/index.html "$1"
+    cp pages/index.html "$1"
 }
 
 main "$@"
