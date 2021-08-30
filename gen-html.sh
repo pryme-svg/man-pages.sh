@@ -41,7 +41,7 @@ make_html () {
 #        sed -i "s|\$source|$src|g" "$1/$(basename "$f").html"
 
 
-        whole=$(gen_page "$body" "title:$title($section)" "date:$(date -I) source:$src" "man_header.html" "man_footer.html")
+        whole=$(gen_page "$body" "title:$title($section)" "date:$(date -I) source:$src" "man_header.html" "man_footer.html" "man-page.css")
 #        whole="$header$body\n$footer"
 #        whole=$(sed -e "s|<title></title>|<title>$title</title>|g" -e "s^<article></article>^<article>$body</article>^g" "template.html")
         echo "$whole" > "$1/$(basename "$f").html"
@@ -74,7 +74,8 @@ make_html () {
 }
 
 # common_{header,footer} assumed
-# gen_header <content> <header_vars (var:value var2:value2)> <footer_vars> <custom_header_file> <custom_footer_file> 
+# style.css assumed (in template)
+# gen_header <content> <header_vars (var:value var2:value2)> <footer_vars> <custom_header_file> <custom_footer_file> <custom_css_file>
 gen_page() {
 
     if [ -z "$4" ]; then
@@ -112,6 +113,15 @@ gen_page() {
             footer=$(echo "$footer" | sed "s|\$$name|$value|g")
         done
     fi
+    if [ -n "$6" ]; then
+        css=""
+        for sheet in $6; do
+            css="$css<link rel=\"stylesheet\" href=\"$sheet\">"
+        done
+        header=$(echo "$header" | sed "s|\$css|$css|g")
+    else
+        header=$(echo "$header" | sed 's/$css//g')
+    fi
     echo "$header\n$1\n$footer"
 }
 
@@ -126,7 +136,7 @@ gen_section_listing () {
         done
         #echo "$i" # just for testing
 #        whole=$(sed -e "s|\$title|Man Pages: section $i|g" templates/listing.html)
-        gen_page "" "title:Man~Pages~section~$i section:$i" "" "listing_header.html" > "$TMPDIR/.tmplisting"
+        gen_page "" "title:Man~Pages~section~$i section:$i" "" "listing_header.html" "listing_footer.html" "" > "$TMPDIR/.tmplisting"
 
         whole=$(sed -f - "$TMPDIR/.tmplisting" << EOF
         s|\$items|$items|g
@@ -164,12 +174,15 @@ main() {
     [ ! -d "$TMPDIR" ] && mkdir "$TMPDIR"
 
     update_pages
-#    make_html $1
-#    rm "$TMPDIR/.tmptoc"
+    make_html $1
     gen_section_listing $1
-    cp style.css "$1"
-    cp listing.css "$1"
-    cp pages/index.html "$1"
+
+    # copy auxillary files
+    cp css/* "$1"
+    cp pages/* "$1"
+
+    # cleanup
+    rm -r "$TMPDIR"
 }
 
 main "$@"
