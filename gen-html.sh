@@ -9,6 +9,12 @@ buildirs_html () {
     done
 }
 
+strip_extension() {
+    while read -r name; do
+        echo "${name%.*}"
+    done
+}
+
 make_html () {
     start=$(date +%s.%N)
 
@@ -26,8 +32,8 @@ make_html () {
     for f in $all_pages; do
         # replace references to man pages with actual link
         body=$(mandoc -T html -O fragment "$f" | sed -E -e 's|<b>(\w+)<\/b>\(([0-8]p?)\)|<a href="\1.\2.html">\1\(\2\)</a>|g' -e 's|<b>(.*?\.conf)<\/b>\(([0-8]p?)\)|<a href="\1.\2.html">\1\(\2\)</a>|g')
-        title=$(basename "$f" | cut -f1 -d".")
-        section=$(basename "$f" | cut -f2 -d".")
+        title=$(basename "$f" | strip_extension)
+        section=$(basename "$f" | rev | cut -f1 -d"." | rev)
 
         basedir=$(echo "$f" | cut -d"/" -f1)
 
@@ -132,7 +138,7 @@ gen_listing () {
         items=""
         echo "Section $i" >> $TMPDIR/.allsections
         for j in $(find "$1" -name "*$i.html" -type f); do
-            name=$(echo "$j" | cut -f1 -d".")
+            name=$(echo "$j" | strip_extension | strip_extension)
             item="<li><a href=\"$(basename $j)\">$(basename $name)($i)</a></li>"
             items=$items$item
             echo "$item" >> $TMPDIR/.allsections
@@ -175,10 +181,12 @@ EOF
 
     all_pages=""
     starting_letters=""
+
     while read -r line; do
         starting_letters="$starting_letters\n$(basename $line | cut -c1-1)"
         all_pages="$all_pages\n$(basename $line)"
     done < $TMPDIR/all_pages
+
     echo "$all_pages" > $TMPDIR/pagenames
     starting_letters=$(echo "$starting_letters" | grep --color=never "\S" | tr [:upper:] [:lower:] | sort -u | uniq -u)
     echo $starting_letters
@@ -190,8 +198,8 @@ EOF
         pgs=$(grep -i -E "^$letter.*" $TMPDIR/pagenames)
         page_html="$page_html\n<h2 id=\"letter_$letter\">$letter</h2>"
         for page in $pgs; do
-            name=$(echo "$page" | cut -d"." -f1)
-            section=$(echo "$page" | cut -d"." -f2)
+            name=$(echo "$page" | strip_extension)
+            section=$(echo "$page" | rev | cut -d"." -f1 | rev)
             alpha_listing="$alpha_listing\n<li><a href=\"$page.html\">$name($section)</a></li>"
         done
         page_html="$page_html<ul>$alpha_listing</ul>"
