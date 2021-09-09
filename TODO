@@ -3,3 +3,5 @@ description in listing
 allow users to search
 
 sort the section listing alphabetically
+
+verify arch package sigs before extracting

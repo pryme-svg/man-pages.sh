@@ -11,17 +11,19 @@ usage() {
 
 test -d "$1" || usage
 
-mirror=""
-
 wget -e robots=off -m -np -c "https://mirror.osbeck.com/archlinux/core/os/x86_64/"
-cd "mirror.osbeck.com/archlinux/core/os/x86_64/"
-rm *.sig # TODO: exclude sig files in find
+
+basedir="mirror.osbeck.com/archlinux/core/os/x86_64"
+tmpdir="man_extract_dir"
+
+#rm *.sig # TODO: exclude sig files in find
+
 for i in $to_delete; do
-	rm "$i*.pkg.tar.zst"
+	rm $basedir/$i*.pkg.tar.zst
 done
 
-for i in $(find . -name "*\.pkg\.tar.*"); do
-    propername=$(echo "$i" | sed 's/.pkg.tar.*//g')
+for i in $(find "$basedir" -name '*.pkg.tar.*' -type f \( ! -name '*.sig' \) -print); do
+    propername=$(basename "$i" | sed 's/.pkg.tar.*//g')
     
     if ! tar -tf "$i" "usr/share/man" >/dev/null 2>&1; then
         rm "$i" # comment if you want to keep packages without man pages
@@ -29,13 +31,15 @@ for i in $(find . -name "*\.pkg\.tar.*"); do
         continue
     fi
 
-    mkdir "$propername"
-    tar -I zstd -xf "$i" -C "$propername"
-    gzipped_pages=$(find "$propername/usr/share/man" -type f)
+    mkdir "$tmpdir/$propername"
+    tar -I zstd -xf "$i" -C "$tmpdir/$propername"
+    gzipped_pages=$(find "$tmpdir/$propername/usr/share/man" -type f)
     
     for page in $gzipped_pages; do
         gzip -df "$page"
-        cp "$(echo "$page" | sed 's/\.gz//g')" $1/
+        cp "$(echo "$page" | sed 's/\.gz//g')" "$1/"
     done
-    rm -rf "$propername"
+    rm -rf "$tmpdir/$propername"
 done
+
+rm -rf "$tmpdir"
