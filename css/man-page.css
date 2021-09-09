@@ -64,7 +64,7 @@ a.permalink {
 .man-page-content table.tbl th {
     padding: 0.35em 0.90em;
     text-align: left;
-    word-break: break-word;
+/*     word-break: break-word; */
 }
 .man-page-content table.tbl tr:first-child td:not(:only-child) {
     font-weight: bold;
