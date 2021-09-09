@@ -15,11 +15,20 @@ strip_extension() {
     done
 }
 
+Info() {
+	tput setaf 6
+	tput bold
+	printf "==> "
+	tput setaf 15
+	printf "$*\n"
+	tput sgr0
+}
+
 make_html () {
     start=$(date +%s.%N)
 
 
-    echo "Generating HTML using mandoc"
+    Info "Generating HTML using mandoc"
     pages=$(find man-pages/man?/ -type f)
     pages_posix=$(find man-pages-posix/man-pages-posix-2017/man??/ -type f)
     pages_arch=$(find arch-linux-pages/ -type f)
@@ -130,7 +139,7 @@ gen_page() {
 }
 
 gen_listing () {
-    echo "Creating individual section listings"
+    Info "Creating individual section listings"
     global_items=""
     sections="0p 1 1p 2 3 3p 4 5 6 7 8"
     echo "" > $TMPDIR/.allsections
@@ -155,7 +164,7 @@ EOF
 
 # all pages by section ---
 
-    echo "Creating listing of all pages by section"
+    Info "Creating listing of all pages by section"
 
     i=1
 
@@ -177,7 +186,7 @@ EOF
 
 # alphabetic pages
 
-    echo "Creating listing of all pages alphabetically"
+    Info "Creating listing of all pages alphabetically"
 
     all_pages=""
     starting_letters=""
@@ -217,7 +226,7 @@ usage() {
 }
 
 update_pages() {
-    echo "Updating git repositories"
+    Info "Updating git repositories"
     test -d "man-pages" || git clone git://git.kernel.org/pub/scm/docs/man-pages/man-pages.git
     test -d "man-pages-posix" || git clone git://git.kernel.org/pub/scm/docs/man-pages/man-pages-posix.git
     for repo in "man-pages" "man-pages-posix"; do
