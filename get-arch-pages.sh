@@ -1,6 +1,6 @@
 #!/bin/sh
 
-to_delete="man-pages" # use original from kernel.org not arch
+to_delete="man-pages" # duplicate
 
 
 usage() {
@@ -11,12 +11,12 @@ usage() {
 
 test -d "$1" || usage
 
-mirror="https://mirror.osbeck.com/archlinux"
+mirror=""
 
-wget -e robots=off -m -np -c "$mirror/core/os/x86_64/"
-cd "$mirror/core/os/x86_64/"
+wget -e robots=off -m -np -c "https://mirror.osbeck.com/archlinux/core/os/x86_64/"
+cd "mirror.osbeck.com/archlinux/core/os/x86_64/"
 rm *.sig # TODO: exclude sig files in find
-for i in to_delete; do
+for i in $to_delete; do
 	rm "$i*.pkg.tar.zst"
 done
 
@@ -35,7 +35,7 @@ for i in $(find . -name "*\.pkg\.tar.*"); do
     
     for page in $gzipped_pages; do
         gzip -df "$page"
-        cp $(echo "$page" | sed 's/\.gz//g') $1/
+        cp "$(echo "$page" | sed 's/\.gz//g')" $1/
     done
     rm -rf "$propername"
 done
