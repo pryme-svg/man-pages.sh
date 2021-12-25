@@ -1,3 +1,5 @@
+# No longer maintained. A much better version can be found [here](https://github.com/pryme-svg/parabolas-manpages)
+
 # man-pages.sh
 
 Render html from man pages. This script is currently used  to generate [Parabolas Manpages](https://man.parabolas.xyz)
